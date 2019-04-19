@@ -41,6 +41,7 @@
     "draft-js-static-toolbar-plugin": "^3.0.0",
     "emotion": "^10.0.9",
     "erxes-icon": "^1.0.9",
+    "formik": "^1.5.2",
     "fuzzysearch-highlight": "^1.0.3",
     "graphql": "^0.12.3",
     "graphql-tag": "^2.6.1",
