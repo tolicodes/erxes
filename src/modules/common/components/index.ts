@@ -18,7 +18,7 @@ import EmptyState from './EmptyState';
 import Filter from './filter/Filter';
 import FilterableList from './filterableList/FilterableList';
 import FilterByParams from './FilterByParams';
-import { ControlLabel, FormControl, FormGroup, Textarea } from './form';
+import { ControlLabel, Form, FormControl, FormGroup, Textarea } from './form';
 import HeaderDescription from './HeaderDescription';
 import Icon from './Icon';
 import ImageWithPreview from './ImageWithPreview';
@@ -74,6 +74,7 @@ export {
   FilterableList,
   DropdownToggle,
   FormControl,
+  Form,
   Textarea,
   ControlLabel,
   FormGroup,

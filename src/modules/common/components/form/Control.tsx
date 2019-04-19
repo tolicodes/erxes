@@ -1,5 +1,5 @@
-import { Formik } from 'formik';
 import * as React from 'react';
+import { Field } from 'react-final-form';
 import {
   Checkbox,
   FormLabel,
@@ -35,6 +35,8 @@ type Props = {
   rows?: number;
   inline?: boolean;
   className?: string;
+  validation?: string[];
+  validationError?: string;
 };
 
 const renderElement = (Element, attributes, type, child) => {
@@ -49,7 +51,12 @@ const renderElement = (Element, attributes, type, child) => {
   );
 };
 
-class FormControl extends React.Component<Props> {
+type IFormDecorator = {
+  input: any;
+  meta: any;
+};
+
+class EnhancedFormControl extends React.Component<Props & IFormDecorator> {
   static defaultProps = {
     componentClass: 'input',
     required: false,
@@ -57,22 +64,22 @@ class FormControl extends React.Component<Props> {
     disabled: false
   };
 
+  // cancel custom browser default form validation error
+  onChange = e => {
+    e.target.classList.remove('form-invalid');
+
+    if (this.props.onChange) {
+      this.props.onChange(e);
+    }
+  };
+
   render() {
     const props = this.props;
     const childNode = props.children;
     const elementType = props.componentClass;
 
-    // cancel custom browser default form validation error
-    const onChange = e => {
-      e.target.classList.remove('form-invalid');
-
-      if (props.onChange) {
-        props.onChange(e);
-      }
-    };
-
     const attributes = {
-      onChange,
+      onChange: this.onChange,
       onKeyPress: props.onKeyPress,
       onClick: props.onClick,
       value: props.value,
@@ -98,23 +105,27 @@ class FormControl extends React.Component<Props> {
     if (elementType === 'select') {
       if (props.options) {
         return (
-          <SelectWrapper>
-            <Select {...attributes}>
-              {props.options.map((option, index) => {
-                return (
-                  <option key={index} value={option.value || ''}>
-                    {option.label || ''}
-                  </option>
-                );
-              })}
-            </Select>
-          </SelectWrapper>
+          <>
+            <SelectWrapper>
+              <Select {...attributes}>
+                {props.options.map((option, index) => {
+                  return (
+                    <option key={index} value={option.value || ''}>
+                      {option.label || ''}
+                    </option>
+                  );
+                })}
+              </Select>
+            </SelectWrapper>
+          </>
         );
       }
       return (
-        <SelectWrapper>
-          <Select {...attributes}>{childNode}</Select>
-        </SelectWrapper>
+        <>
+          <SelectWrapper>
+            <Select {...attributes}>{childNode}</Select>
+          </SelectWrapper>
+        </>
       );
     }
 
@@ -138,11 +149,44 @@ class FormControl extends React.Component<Props> {
     }
 
     if (elementType === 'textarea') {
-      return <Textarea {...props} />;
+      return (
+        <>
+          <Textarea {...props} />
+        </>
+      );
     }
 
-    return <Input {...attributes} />;
+    return (
+      <>
+        <Input {...attributes} />
+      </>
+    );
   }
 }
+
+class WithFormsyContainer extends React.Component<Props> {
+  render() {
+    const { validation, name } = this.props;
+    const required = value => (value ? undefined : 'Required');
+
+    return (
+      <Field name={name ? name : ''} validate={required}>
+        {({ input, meta }) => {
+          // tslint:disable-next-line:no-console
+          console.log(input, meta);
+          return <EnhancedFormControl input={input} meta={meta} />;
+        }}
+      </Field>
+    );
+  }
+}
+
+const FormControl = props => {
+  if (props.validation) {
+    return <WithFormsyContainer {...props} />;
+  }
+
+  return <EnhancedFormControl {...props} />;
+};
 
 export default FormControl;

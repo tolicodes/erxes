@@ -1,6 +1,6 @@
 import { UserCommonInfos } from 'modules/auth/components';
 import { IUser, IUserDoc } from 'modules/auth/types';
-import { Button } from 'modules/common/components';
+import { Button, Form } from 'modules/common/components';
 import { ModalFooter } from 'modules/common/styles/main';
 import { __ } from 'modules/common/utils';
 import { Alert } from 'modules/common/utils';
@@ -49,7 +49,7 @@ class EditProfile extends React.Component<Props, State> {
     this.props.closeModal();
   };
 
-  handleSubmit = password => {
+  handleSubmit = docs => {
     this.props.save(
       {
         username: this.getInputElementValue('username'),
@@ -70,7 +70,7 @@ class EditProfile extends React.Component<Props, State> {
           github: this.getInputElementValue('github'),
           website: this.getInputElementValue('website')
         },
-        password
+        password: docs.password
       },
       this.closeAllModals
     );
@@ -78,10 +78,6 @@ class EditProfile extends React.Component<Props, State> {
 
   onAvatarUpload = url => {
     this.setState({ avatar: url });
-  };
-
-  onSuccess = password => {
-    return this.handleSubmit(password);
   };
 
   isValidEmail = () => {
@@ -104,7 +100,7 @@ class EditProfile extends React.Component<Props, State> {
         </Modal.Header>
         <Modal.Body>
           <PasswordConfirmation
-            onSuccess={this.onSuccess}
+            onSuccess={this.handleSubmit}
             closeModal={this.closeConfirm}
           />
         </Modal.Body>
@@ -114,33 +110,34 @@ class EditProfile extends React.Component<Props, State> {
 
   render() {
     return (
-      <React.Fragment>
-        <UserCommonInfos
-          user={this.props.currentUser}
-          onAvatarUpload={this.onAvatarUpload}
-        />
+      <>
+        <Form onSubmit={this.showConfirm}>
+          <UserCommonInfos
+            user={this.props.currentUser}
+            onAvatarUpload={this.onAvatarUpload}
+          />
 
+          <ModalFooter>
+            <Button
+              btnStyle="simple"
+              type="button"
+              onClick={this.props.closeModal}
+              icon="cancel-1"
+            >
+              Cancel
+            </Button>
+
+            <Button
+              btnStyle="success"
+              icon="checked-1"
+              onClick={this.showConfirm}
+            >
+              Save
+            </Button>
+          </ModalFooter>
+        </Form>
         {this.renderPasswordConfirmationModal()}
-
-        <ModalFooter>
-          <Button
-            btnStyle="simple"
-            type="button"
-            onClick={this.props.closeModal}
-            icon="cancel-1"
-          >
-            Cancel
-          </Button>
-
-          <Button
-            btnStyle="success"
-            icon="checked-1"
-            onClick={this.showConfirm}
-          >
-            Save
-          </Button>
-        </ModalFooter>
-      </React.Fragment>
+      </>
     );
   }
 }
