@@ -39,7 +39,7 @@ class Greeting extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    const { teamMembers, supporterIds = [], messages } = props;
+    const { messages } = props;
 
     this.state = {
       supporters: [],
@@ -66,23 +66,17 @@ class Greeting extends React.Component<Props, State> {
     this.props.onChange('messages', messages);
   };
 
-  onTeamMembersChange = (a, b) => {
-    const { teamMembers } = this.props;
-
-    const supporters = teamMembers.filter(member => {
-      return a.includes(member._id);
-    });
-
-    // tslint:disable
-    console.log(supporters);
-    console.log(teamMembers);
+  onTeamMembersChange = options => {
+    if (options.length > 3) {
+      return;
+    }
 
     this.setState({
-      supporters,
-      supporterIds: a
+      supporters: options,
+      supporterIds: options.map(option => option)
     });
 
-    this.props.onChange('supporterIds', a);
+    this.props.onChange('supporterIds', options.map(option => option));
   };
 
   render() {
@@ -140,14 +134,6 @@ class Greeting extends React.Component<Props, State> {
               onSelect={this.onTeamMembersChange}
               filterParams={{ status: 'verified' }}
             />
-            {/* <Select
-              closeOnSelect={false}
-              value={this.state.supporters}
-              options={this.generateSupporterOptions(this.props.teamMembers)}
-              onChange={this.onTeamMembersChange}
-              clearable={true}
-              multi={true}
-            /> */}
           </FormGroup>
 
           <SubHeading>{__('Links')}</SubHeading>
