@@ -201,6 +201,7 @@ class CompanyForm extends React.Component<Props, State> {
                 value={ownerId}
                 onSelect={onSelectOwner}
                 multi={false}
+                filterParams={{ status: 'verified' }}
               />
             </FormGroup>
 

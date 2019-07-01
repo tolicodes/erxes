@@ -8,8 +8,8 @@ import { FlexItem, LeftItem } from 'modules/common/components/step/styles';
 import { __ } from 'modules/common/utils';
 import { IMessages } from 'modules/settings/integrations/types';
 import { SubHeading } from 'modules/settings/styles';
+import { SelectTeamMembers } from 'modules/settings/team/containers';
 import * as React from 'react';
-import Select from 'react-select-plus';
 
 type Props = {
   onChange: (
@@ -41,12 +41,8 @@ class Greeting extends React.Component<Props, State> {
 
     const { teamMembers, supporterIds = [], messages } = props;
 
-    const selectedMembers: IUser[] = teamMembers.filter(member =>
-      supporterIds.includes(member._id)
-    );
-
     this.state = {
-      supporters: this.generateSupporterOptions(selectedMembers),
+      supporters: [],
       supporterIds: [],
       facebook: '',
       twitter: '',
@@ -70,30 +66,24 @@ class Greeting extends React.Component<Props, State> {
     this.props.onChange('messages', messages);
   };
 
-  onTeamMembersChange = options => {
-    if (options.length > 3) {
-      return;
-    }
+  onTeamMembersChange = (a, b) => {
+    const { teamMembers } = this.props;
+
+    const supporters = teamMembers.filter(member => {
+      return a.includes(member._id);
+    });
+
+    // tslint:disable
+    console.log(supporters);
+    console.log(teamMembers);
 
     this.setState({
-      supporters: options,
-      supporterIds: options.map(option => option.value)
+      supporters,
+      supporterIds: a
     });
 
-    this.props.onChange('supporterIds', options.map(option => option.value));
+    this.props.onChange('supporterIds', a);
   };
-
-  generateSupporterOptions(members: IUser[] = []) {
-    return members.map(member => {
-      const details = member.details || {};
-
-      return {
-        value: member._id,
-        label: details.fullName,
-        avatar: details.avatar
-      };
-    });
-  }
 
   render() {
     const { facebook, twitter, youtube, languageCode } = this.props;
@@ -143,14 +133,21 @@ class Greeting extends React.Component<Props, State> {
           <FormGroup>
             <ControlLabel>Supporters</ControlLabel>
 
-            <Select
+            <SelectTeamMembers
+              label="Choose supporters"
+              name="selectedMembers"
+              value={this.state.supporters}
+              onSelect={this.onTeamMembersChange}
+              filterParams={{ status: 'verified' }}
+            />
+            {/* <Select
               closeOnSelect={false}
               value={this.state.supporters}
               options={this.generateSupporterOptions(this.props.teamMembers)}
               onChange={this.onTeamMembersChange}
               clearable={true}
               multi={true}
-            />
+            /> */}
           </FormGroup>
 
           <SubHeading>{__('Links')}</SubHeading>

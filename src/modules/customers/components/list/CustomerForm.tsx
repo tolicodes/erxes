@@ -206,6 +206,7 @@ class CustomerForm extends React.Component<Props, State> {
                 value={this.state.ownerId}
                 onSelect={this.onOwnerChange}
                 multi={false}
+                filterParams={{ status: 'verified' }}
               />
             </FormGroup>
 

@@ -95,6 +95,7 @@ class GroupForm extends React.Component<Props, State> {
             name="selectedMembers"
             value={self.state.selectedMembers}
             onSelect={onChange}
+            filterParams={{ status: 'verified' }}
           />
         </FormGroup>
 

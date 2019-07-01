@@ -7,6 +7,7 @@ import {
   FormGroup
 } from 'modules/common/components';
 import { __, Alert } from 'modules/common/utils';
+import { SelectTeamMembers } from 'modules/settings/team/containers';
 import * as React from 'react';
 import { Modal } from 'react-bootstrap';
 import Select from 'react-select-plus';
@@ -196,12 +197,13 @@ class PermissionForm extends React.Component<Props, State> {
             <Divider>{__('Or')}</Divider>
             <FormGroup>
               <ControlLabel required={true}>Choose the users</ControlLabel>
-              <Select
-                placeholder="Choose users"
-                options={generateListParams(users)}
+
+              <SelectTeamMembers
+                label="Choose users"
+                name="selectedMembers"
                 value={selectedUsers}
-                onChange={this.select.bind(this, 'selectedUsers')}
-                multi={true}
+                onSelect={this.select.bind(this, 'selectedUsers')}
+                filterParams={{ status: 'verified' }}
               />
             </FormGroup>
           </StepBody>

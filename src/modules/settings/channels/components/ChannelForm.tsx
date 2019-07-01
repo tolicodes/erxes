@@ -94,6 +94,7 @@ class ChannelForm extends React.Component<Props, State> {
             name="selectedMembers"
             value={self.state.selectedMembers}
             onSelect={onChange}
+            filterParams={{ status: 'verified' }}
           />
         </FormGroup>
         <ModalFooter>
