@@ -1028,6 +1028,15 @@ a:hover {
   .modal-close-date {
     width: 330px;
   }
+
+  .has-scroll {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .no-scroll {
+    overflow: visible;
+  }
 `;
 
 const globalStyle = [`${style}`] as any;

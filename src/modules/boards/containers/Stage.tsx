@@ -22,6 +22,7 @@ type WrapperProps = {
   length: number;
   queryParams: IFilterParams;
   options: IOptions;
+  isDragging: boolean;
 };
 
 type StageProps = {
@@ -88,7 +89,8 @@ class StageContainer extends React.PureComponent<FinalStageProps> {
       items,
       itemsQuery,
       options,
-      onAddItem
+      onAddItem,
+      isDragging
     } = this.props;
 
     const loadingItems = (itemsQuery ? itemsQuery.loading : null) || false;
@@ -103,6 +105,7 @@ class StageContainer extends React.PureComponent<FinalStageProps> {
         loadingItems={loadingItems}
         loadMore={this.loadMore}
         onAddItem={onAddItem}
+        isDragging={isDragging}
       />
     );
   }

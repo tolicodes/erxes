@@ -21,6 +21,7 @@ const Board = (props: Props) => {
           pipeline={pipeline}
           key={pipeline._id}
           queryParams={queryParams}
+          isDragging={false}
         />
       </ScrolledContent>
     </RootBack>

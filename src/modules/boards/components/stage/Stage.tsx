@@ -19,7 +19,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import { AddForm } from '../../containers/portable';
 import { IItem, IOptions, IStage } from '../../types';
 import { renderAmount } from '../../utils';
-import ItemList from '../stage/ItemList';
+import ItemList from './ItemList';
 
 type Props = {
   loadingItems: boolean;
@@ -30,6 +30,7 @@ type Props = {
   onAddItem: (stageId: string, item: IItem) => void;
   loadMore: () => void;
   options: IOptions;
+  isDragging: boolean;
 };
 export default class Stage extends React.Component<Props, {}> {
   private bodyRef;
@@ -114,14 +115,22 @@ export default class Stage extends React.Component<Props, {}> {
   }
 
   shouldComponentUpdate(nextProps: Props) {
-    const { stage, index, length, items, loadingItems } = this.props;
+    const {
+      stage,
+      index,
+      length,
+      items,
+      loadingItems,
+      isDragging
+    } = this.props;
 
     if (
       index !== nextProps.index ||
       loadingItems !== nextProps.loadingItems ||
       length !== nextProps.length ||
       JSON.stringify(stage) !== JSON.stringify(nextProps.stage) ||
-      JSON.stringify(items) !== JSON.stringify(nextProps.items)
+      JSON.stringify(items) !== JSON.stringify(nextProps.items) ||
+      isDragging !== nextProps.isDragging
     ) {
       return true;
     }
@@ -151,7 +160,8 @@ export default class Stage extends React.Component<Props, {}> {
   }
 
   render() {
-    const { index, stage } = this.props;
+    const { index, stage, isDragging } = this.props;
+    const className = isDragging ? 'no-scroll' : 'has-scroll';
 
     if (!stage) {
       return <EmptyState icon="clipboard" text="No stage" size="small" />;
@@ -170,7 +180,11 @@ export default class Stage extends React.Component<Props, {}> {
                 <HeaderAmount>{renderAmount(stage.amount)}</HeaderAmount>
                 <Indicator>{this.renderIndicator()}</Indicator>
               </Header>
-              <Body innerRef={this.bodyRef} onScroll={this.onScroll}>
+              <Body
+                innerRef={this.bodyRef}
+                onScroll={this.onScroll}
+                className={className}
+              >
                 {this.renderItemList()}
               </Body>
               {this.renderAddItemTrigger()}

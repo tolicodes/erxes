@@ -31,6 +31,7 @@ type State = {
   itemMap: IItemMap;
   stageLoadMap: StageLoadMap;
   stageIds: string[];
+  isDragging: boolean;
 };
 
 interface IStore {
@@ -44,6 +45,8 @@ interface IStore {
   onAddItem: (stageId: string, item: IItem) => void;
   onRemoveItem: (itemId: string, stageId: string) => void;
   onUpdateItem: (item: IItem, prevStageId?: string) => void;
+  onBeforeDragStart: () => void;
+  isDragging: boolean;
 }
 
 const PipelineContext = React.createContext({} as IStore);
@@ -68,7 +71,8 @@ export class PipelineProvider extends React.Component<Props, State> {
     this.state = {
       itemMap: initialItemMap || {},
       stageLoadMap: {},
-      stageIds: Object.keys(initialItemMap || {})
+      stageIds: Object.keys(initialItemMap || {}),
+      isDragging: false
     };
 
     PipelineProvider.tasks = [];
@@ -90,7 +94,13 @@ export class PipelineProvider extends React.Component<Props, State> {
     }
   }
 
+  onBeforeDragStart = () => {
+    this.setState({ isDragging: true });
+  };
+
   onDragEnd = result => {
+    this.setState({ isDragging: false });
+
     // dropped nowhere
     if (!result.destination) {
       return;
@@ -336,12 +346,13 @@ export class PipelineProvider extends React.Component<Props, State> {
   };
 
   render() {
-    const { itemMap, stageLoadMap, stageIds } = this.state;
+    const { itemMap, stageLoadMap, stageIds, isDragging } = this.state;
 
     return (
       <PipelineContext.Provider
         value={{
           options: this.props.options,
+          onBeforeDragStart: this.onBeforeDragStart,
           onDragEnd: this.onDragEnd,
           onLoadStage: this.onLoadStage,
           scheduleStage: this.scheduleStage,
@@ -350,7 +361,8 @@ export class PipelineProvider extends React.Component<Props, State> {
           onUpdateItem: this.onUpdateItem,
           itemMap,
           stageLoadMap,
-          stageIds
+          stageIds,
+          isDragging
         }}
       >
         {this.props.children}

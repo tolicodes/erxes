@@ -28,6 +28,7 @@ type Props = {
   stageMap?: IStageMap;
   queryParams: any;
   options: IOptions;
+  isDragging: boolean;
 };
 
 class WithStages extends React.Component<WithStatesQueryProps, {}> {
@@ -89,8 +90,18 @@ class WithStages extends React.Component<WithStatesQueryProps, {}> {
         queryParamsChanged={this.queryParamsChanged}
       >
         <PipelineConsumer>
-          {({ stageLoadMap, itemMap, onDragEnd, stageIds }) => (
-            <DragDropContext onDragEnd={onDragEnd}>
+          {({
+            stageLoadMap,
+            itemMap,
+            onDragEnd,
+            stageIds,
+            onBeforeDragStart,
+            isDragging
+          }) => (
+            <DragDropContext
+              onDragEnd={onDragEnd}
+              onBeforeDragStart={onBeforeDragStart}
+            >
               <Droppable
                 droppableId="pipeline"
                 type="STAGE"
@@ -119,6 +130,7 @@ class WithStages extends React.Component<WithStatesQueryProps, {}> {
                           items={itemMap[stageId]}
                           queryParams={queryParams}
                           loadingState={stageLoadMap[stageId]}
+                          isDragging={isDragging}
                         />
                       );
                     })}
