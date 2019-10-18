@@ -18,7 +18,6 @@ import { PipelineConsumer, PipelineProvider } from './PipelineContext';
 import Stage from './Stage';
 
 const Container = styled.div`
-  height: 100%;
   display: inline-flex;
 `;
 
@@ -110,6 +109,7 @@ class WithStages extends React.Component<WithStatesQueryProps, {}> {
               >
                 {provided => (
                   <Container
+                    style={{ height: isDragging ? '' : '100%' }}
                     innerRef={provided.innerRef}
                     {...provided.droppableProps}
                   >

@@ -1,3 +1,4 @@
+import debounce from 'lodash/debounce';
 import {
   AddNew,
   Body,
@@ -32,13 +33,15 @@ type Props = {
   options: IOptions;
   isDragging: boolean;
 };
-export default class Stage extends React.Component<Props, {}> {
+export default class Stage extends React.Component<Props, { style: any }> {
   private bodyRef;
 
   constructor(props: Props) {
     super(props);
 
     this.bodyRef = React.createRef();
+
+    this.state = { style: {} };
   }
 
   componentDidMount() {
@@ -64,7 +67,21 @@ export default class Stage extends React.Component<Props, {}> {
         clearInterval(handle);
       }
     }, 1000);
+
+    debounce(() => this.setState({ style: { overflow: 'auto' } }), 500)();
   }
+
+  componentDidUpdate() {
+    this.setStyle();
+  }
+
+  setStyle = () => {
+    if (!this.props.isDragging) {
+      return this.setState({ style: { overflow: '' } });
+    }
+
+    return this.setState({ style: { overflow: 'auto' } });
+  };
 
   onScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
@@ -161,7 +178,6 @@ export default class Stage extends React.Component<Props, {}> {
 
   render() {
     const { index, stage, isDragging } = this.props;
-    const className = isDragging ? 'no-scroll' : 'has-scroll';
 
     if (!stage) {
       return <EmptyState icon="clipboard" text="No stage" size="small" />;
@@ -170,7 +186,11 @@ export default class Stage extends React.Component<Props, {}> {
     return (
       <Draggable draggableId={stage._id} index={index}>
         {(provided, snapshot) => (
-          <Container innerRef={provided.innerRef} {...provided.draggableProps}>
+          <Container
+            isDragging={isDragging}
+            innerRef={provided.innerRef}
+            {...provided.draggableProps}
+          >
             <StageRoot isDragging={snapshot.isDragging}>
               <Header {...provided.dragHandleProps}>
                 <h4>
@@ -183,7 +203,7 @@ export default class Stage extends React.Component<Props, {}> {
               <Body
                 innerRef={this.bodyRef}
                 onScroll={this.onScroll}
-                className={className}
+                style={this.state.style}
               >
                 {this.renderItemList()}
               </Body>

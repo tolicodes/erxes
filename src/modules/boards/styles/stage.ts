@@ -7,12 +7,24 @@ const hoverColor = 'rgba(10,45,65,.13)';
 const stageGray = '#e5e8ec';
 const secondaryText = '#6a818c';
 
-const Container = styled.div`
+const Body = styled.div`
+  margin: 0 4px;
+`;
+
+const Container = styledTS<{ isDragging: boolean }>(styled.div)`
   display: flex;
   flex-direction: column;
   margin: 0 5px;
   width: ${stageWidth}px;
   transition: background-color 0.3s ease;
+
+  ${props =>
+    !props.isDragging &&
+    css`
+      ${Body} {
+        max-height: 100%;
+      }
+    `};
 `;
 
 const StageRoot = styledTS<{ isDragging: boolean }>(styled.div)`
@@ -120,11 +132,6 @@ const Amount = styled.ul`
       content: '';
     }
   }
-`;
-
-const Body = styled.div`
-  max-height: 100%;
-  margin: 0 4px;
 `;
 
 const AddNew = styled.a`
